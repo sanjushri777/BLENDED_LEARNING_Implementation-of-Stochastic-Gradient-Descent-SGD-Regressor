@@ -43,57 +43,62 @@ Program to implement SGD Regressor for linear regression.
 Developed by: Sanjushri A
 RegisterNumber: 21223040187
 '''
-# Importing necessary libraries
+
+
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
 
 # Load the dataset
-data = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-ML240EN-SkillsNetwork/labs/data/CarPrice_Assignment.csv")
+file_path = r'C:\Users\admin\Downloads\X_Y_Sinusoid_Data (2).csv'  # Replace with the actual file path
+data = pd.read_csv(file_path)
+print(data.columns)
 
-# Data preprocessing
-# Dropping unnecessary columns and handling categorical variables
-data = data.drop(['CarName', 'car_ID'], axis=1)
-data = pd.get_dummies(data, drop_first=True)
 
-# Splitting the data into features and target variable
-X = data.drop('price', axis=1)
-y = data['price']
+# Split the data into features and target
+X = data[['x']]  # Independent variable
+y = data['y']    # Dependent variable
 
-# Splitting the dataset into training and testing sets
+# Split into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Creating the SGD Regressor model
-model = SGDRegressor(max_iter=1000, tol=1e-3)
+# Initialize and train the SGD Regressor
+sgd_regressor = SGDRegressor(max_iter=1000, tol=1e-3, random_state=42)
+sgd_regressor.fit(X_train, y_train)
 
-# Fitting the model on the training data
-model.fit(X_train, y_train)
+# Predict on training and testing data
+y_train_pred = sgd_regressor.predict(X_train)
+y_test_pred = sgd_regressor.predict(X_test)
 
-# Making predictions
-predictions = model.predict(X_test)
+# Evaluate performance
+train_mse = mean_squared_error(y_train, y_train_pred)
+test_mse = mean_squared_error(y_test, y_test_pred)
+train_r2 = r2_score(y_train, y_train_pred)
+test_r2 = r2_score(y_test, y_test_pred)
 
-# Evaluating model performance
-mse = mean_squared_error(y_test, predictions)
-r2 = r2_score(y_test, predictions)
+print("Training Mean Squared Error:", train_mse)
+print("Testing Mean Squared Error:", test_mse)
+print("Training R^2 Score:", train_r2)
+print("Testing R^2 Score:", test_r2)
 
-# Print evaluation metrics
-print("Mean Squared Error:", mse)
-print("R-squared Score:", r2)
-
-# Visualizing actual vs predicted prices
-plt.scatter(y_test, predictions)
-plt.xlabel("Actual Prices")
-plt.ylabel("Predicted Prices")
-plt.title("Actual vs Predicted Prices using SGD Regressor")
-plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red')  # Perfect prediction line
+# Visualize predictions vs actual data
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.scatter(X_test, y_test_pred, color='red', label='Predicted')
+plt.title('Actual vs Predicted Values')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.grid(True)
 plt.show()
+
 ```
 
 ## Output:
-<img width="780" alt="Screenshot 2024-10-06 at 8 48 56 PM" src="https://github.com/user-attachments/assets/02eb9acd-52d8-4e8e-bc89-bb080032cfb9">
+![image](https://github.com/user-attachments/assets/e4de9c85-8719-4681-beab-5b940b5df623)
+
 
 
 
