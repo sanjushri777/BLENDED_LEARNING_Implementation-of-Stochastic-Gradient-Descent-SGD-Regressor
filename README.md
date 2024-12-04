@@ -45,54 +45,43 @@ RegisterNumber: 21223040187
 '''
 
 
+/*
+Program to implement SGD Regressor for linear regression.
+Developed by: Vishwaraj G.
+RegisterNumber: 212223220125
+*/
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.pyplot as plt
 
 # Load the dataset
-file_path = r'C:\Users\admin\Downloads\X_Y_Sinusoid_Data (2).csv'  # Replace with the actual file path
-data = pd.read_csv(file_path)
-print(data.columns)
+file_path = 'encoded_car_data.csv'
+df = pd.read_csv(file_path)
 
+# Select relevant features and target variable
+X = df.drop(columns=['price'])  # All columns except 'price'
+y = df['price']  # Target variable
 
-# Split the data into features and target
-X = data[['x']]  # Independent variable
-y = data['y']    # Dependent variable
-
-# Split into training and testing sets
+# Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Initialize and train the SGD Regressor
-sgd_regressor = SGDRegressor(max_iter=1000, tol=1e-3, random_state=42)
-sgd_regressor.fit(X_train, y_train)
+# Train the SGD Regressor
+sgd_model = SGDRegressor(max_iter=1000, tol=1e-3, random_state=42)  # Default settings
+sgd_model.fit(X_train, y_train)
 
-# Predict on training and testing data
-y_train_pred = sgd_regressor.predict(X_train)
-y_test_pred = sgd_regressor.predict(X_test)
+# Predictions on test set
+y_pred = sgd_model.predict(X_test)
 
-# Evaluate performance
-train_mse = mean_squared_error(y_train, y_train_pred)
-test_mse = mean_squared_error(y_test, y_test_pred)
-train_r2 = r2_score(y_train, y_train_pred)
-test_r2 = r2_score(y_test, y_test_pred)
+# Evaluate the model
+print("Model Performance:")
+print("Mean Squared Error (MSE):", mean_squared_error(y_test, y_pred))
+print("R-squared:", r2_score(y_test, y_pred))
 
-print("Training Mean Squared Error:", train_mse)
-print("Testing Mean Squared Error:", test_mse)
-print("Training R^2 Score:", train_r2)
-print("Testing R^2 Score:", test_r2)
-
-# Visualize predictions vs actual data
-plt.figure(figsize=(10, 6))
-plt.scatter(X_test, y_test, color='blue', label='Actual')
-plt.scatter(X_test, y_test_pred, color='red', label='Predicted')
-plt.title('Actual vs Predicted Values')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Print model coefficients
+print("\nModel Coefficients:")
+print("Coefficients:", sgd_model.coef_)
+print("Intercept:", sgd_model.intercept_)
 
 ```
 
